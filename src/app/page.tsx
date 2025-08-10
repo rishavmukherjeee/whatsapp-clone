@@ -1,103 +1,158 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import ChatSidebar from '@/components/chat/ChatSidebar';
+import ChatWindow from '@/components/chat/ChatWindow';
+import MobileLayout from '@/components/chat/MobileLayout';
+import { Conversation, Message } from '@/types/message';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  // Fetch all conversations
+  const fetchConversations = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/messages');
+      if (response.ok) {
+        const data = await response.json();
+        const formattedConversations: Conversation[] = data.map((conv: any) => ({
+          wa_id: conv._id,
+          contact_name: conv.contact_name,
+          lastMessage: conv.lastMessage,
+          unreadCount: conv.unreadCount,
+          messages: []
+        }));
+        setConversations(formattedConversations);
+      }
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch messages for specific conversation
+  const fetchMessages = async (wa_id: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/messages?wa_id=${wa_id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data);
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Process webhook payloads
+  const processPayloads = async () => {
+    try {
+      setIsProcessing(true);
+      const response = await fetch('/api/process-payloads', {
+        method: 'POST'
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Payload processing result:', result);
+        // Refresh conversations after processing
+        await fetchConversations();
+      } else {
+        console.error('Error processing payloads');
+      }
+    } catch (error) {
+      console.error('Error processing payloads:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Send new message
+  const sendMessage = async (text: string) => {
+    if (!selectedConversation) return;
+
+    const selectedContact = conversations.find(c => c.wa_id === selectedConversation);
+    if (!selectedContact) return;
+
+    try {
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          wa_id: selectedConversation,
+          contact_name: selectedContact.contact_name
+        }),
+      });
+
+      if (response.ok) {
+        const newMessage = await response.json();
+        setMessages(prev => [...prev, newMessage]);
+        
+        // Update conversations list
+        await fetchConversations();
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
+  // Handle conversation selection
+  const handleSelectConversation = (wa_id: string) => {
+    setSelectedConversation(wa_id);
+    fetchMessages(wa_id);
+  };
+
+  // Load conversations on mount
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
+  const selectedContact = conversations.find(c => c.wa_id === selectedConversation);
+
+  return (
+    <>
+      {/* Desktop Layout */}
+      <div className="h-screen md:flex bg-gray-100 hidden">
+        <ChatSidebar
+          conversations={conversations}
+          selectedConversation={selectedConversation}
+          onSelectConversation={handleSelectConversation}
+          onProcessPayloads={processPayloads}
+          isProcessing={isProcessing}
+        />
+        <ChatWindow
+          messages={messages}
+          selectedContact={selectedContact ? {
+            wa_id: selectedContact.wa_id,
+            contact_name: selectedContact.contact_name
+          } : null}
+          onSendMessage={sendMessage}
+          isLoading={isLoading}
+        />
+      </div>
+
+      {/* Mobile Layout */}
+      <MobileLayout
+        conversations={conversations}
+        selectedConversation={selectedConversation}
+        messages={messages}
+        onSelectConversation={handleSelectConversation}
+        onSendMessage={sendMessage}
+        onProcessPayloads={processPayloads}
+        isProcessing={isProcessing}
+        isLoading={isLoading}
+      />
+    </>
   );
 }

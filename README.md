@@ -1,36 +1,186 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WhatsApp Web Clone
 
-## Getting Started
+A full-stack WhatsApp Web clone built with Next.js, TypeScript, MongoDB, and Tailwind CSS. This application processes WhatsApp Business API webhook payloads and displays them in a WhatsApp-like interface.
 
-First, run the development server:
+## Features
+
+- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+- 💬 **Real-time Chat Interface**: WhatsApp Web-like UI with message bubbles, timestamps, and status indicators  
+- 📊 **Webhook Processing**: Processes WhatsApp Business API webhook payloads
+- 🗄️ **MongoDB Integration**: Stores and manages messages and conversations
+- ✅ **Message Status**: Displays sent, delivered, and read status indicators
+- 🔍 **Search Functionality**: Search through conversations
+- 📤 **Send Messages**: Compose and send new messages (stored locally)
+
+## Tech Stack
+
+- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, Node.js
+- **Database**: MongoDB Atlas
+- **Deployment**: Vercel (recommended)
+
+## Setup Instructions
+
+### 1. Prerequisites
+
+- Node.js 18+ 
+- MongoDB Atlas account
+- Git
+
+### 2. Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone <your-repo-url>
+cd whatsapp-clone
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Environment Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env.local` file with:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+MONGODB_URI=your_mongodb_atlas_connection_string
+MONGODB_DB=whatsapp
+NEXT_PUBLIC_SOCKET_URL=http://localhost:3000
+```
 
-## Learn More
+### 4. Database Setup
 
-To learn more about Next.js, take a look at the following resources:
+1. Create a MongoDB Atlas cluster
+2. Add your IP address to the Network Access list
+3. Create a database user with read/write permissions
+4. Copy the connection string to your `.env.local` file
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 5. Sample Data Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Create a `Data` folder in the project root
+2. Copy all the sample JSON payload files to the `Data` folder:
+   - `conversation_1_message_1.json`
+   - `conversation_1_message_2.json`  
+   - `conversation_1_status_1.json`
+   - `conversation_1_status_2.json`
+   - `conversation_2_message_1.json`
+   - `conversation_2_message_2.json`
+   - `conversation_2_status_1.json`
+   - `conversation_2_status_2.json`
 
-## Deploy on Vercel
+### 6. Run the Application
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Development mode
+npm run dev
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Production build
+npm run build
+npm start
+```
+
+Visit `http://localhost:3000` to see the application.
+
+### 7. Processing Webhook Payloads
+
+1. Click the "Process Payloads" button in the sidebar
+2. This will read all JSON files from the `Data` folder and insert them into MongoDB
+3. Messages and status updates will be processed automatically
+
+## API Endpoints
+
+### GET `/api/messages`
+- Get all conversations (without `wa_id` parameter)
+- Get messages for specific conversation (with `wa_id` parameter)
+
+### POST `/api/messages`
+Send a new message
+```json
+{
+  "text": "Hello!",
+  "wa_id": "919937320320",
+  "contact_name": "Ravi Kumar"
+}
+```
+
+### POST `/api/process-payloads`
+Process all webhook payload files from the `Data` directory
+
+## File Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── messages/route.ts
+│   │   └── process-payloads/route.ts
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   └── chat/
+│       ├── ChatSidebar.tsx
+│       ├── ChatWindow.tsx
+│       └── MobileLayout.tsx
+├── lib/
+│   └── mongodb.ts
+└── types/
+    └── message.ts
+```
+
+## Deployment
+
+### Vercel Deployment
+
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Add environment variables in Vercel dashboard:
+   - `MONGODB_URI`
+   - `MONGODB_DB`
+4. Deploy!
+
+### Other Hosting Providers
+
+The app can be deployed on:
+- Heroku
+- Railway
+- DigitalOcean App Platform  
+- AWS Amplify
+- Netlify
+
+Make sure to:
+1. Add environment variables
+2. Upload the `Data` folder with sample JSON files
+3. Ensure MongoDB Atlas allows connections from your hosting provider's IPs
+
+## Usage
+
+1. **Load Sample Data**: Click "Process Payloads" to load sample conversations
+2. **Browse Conversations**: Click on any conversation in the sidebar
+3. **Send Messages**: Type in the message box and press Enter or click Send
+4. **Mobile Experience**: The app is fully responsive and works on mobile devices
+
+## Features Implemented
+
+✅ **Task 1**: Webhook payload processor with MongoDB integration  
+✅ **Task 2**: WhatsApp Web-like interface with conversations and messages  
+✅ **Task 3**: Send message functionality (demo/storage only)  
+✅ **Task 4**: Deployment ready (Vercel recommended)  
+✅ **Responsive Design**: Works on mobile and desktop  
+✅ **Message Status**: Sent/delivered/read indicators  
+✅ **Search**: Search through conversations  
+✅ **Real-time UI**: Automatic updates when sending messages  
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+This project is for educational/demonstration purposes.
