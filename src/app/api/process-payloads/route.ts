@@ -21,7 +21,7 @@ function extractMessageData(payload: WebhookPayload): Message | null {
       to: value.metadata.display_phone_number,
       timestamp: parseInt(message.timestamp),
       text: message.text?.body || '',
-      type: message.type as any,
+  type: message.type as Message['type'],
       contact_name: contact.profile.name,
       wa_id: contact.wa_id,
       status: 'sent',
@@ -33,7 +33,13 @@ function extractMessageData(payload: WebhookPayload): Message | null {
   return null;
 }
 
-function extractStatusData(payload: WebhookPayload) {
+function extractStatusData(payload: WebhookPayload): {
+  messageId: string;
+  metaMsgId?: string;
+  status: 'sent' | 'delivered' | 'read';
+  timestamp: number;
+  recipientId: string;
+} | null {
   const entry = payload.metaData.entry[0];
   const change = entry.changes[0];
   const value = change.value;
@@ -77,7 +83,7 @@ export async function POST() {
     for (const file of messageFiles) {
       const filePath = path.join(dataDir, file);
       const fileContent = fs.readFileSync(filePath, 'utf8');
-      const payload: WebhookPayload = JSON.parse(fileContent);
+  const payload: WebhookPayload = JSON.parse(fileContent);
 
       const messageData = extractMessageData(payload);
       if (messageData) {
@@ -93,7 +99,7 @@ export async function POST() {
     for (const file of statusFiles) {
       const filePath = path.join(dataDir, file);
       const fileContent = fs.readFileSync(filePath, 'utf8');
-      const payload: WebhookPayload = JSON.parse(fileContent);
+  const payload: WebhookPayload = JSON.parse(fileContent);
 
       const statusData = extractStatusData(payload);
       if (statusData) {

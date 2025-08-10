@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Phone, Video, MoreVertical, Smile } from 'lucide-react';
 import { Message } from '@/types/message';
+import type { EmojiClickData } from '@/types/emoji';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 interface ChatWindowProps {
@@ -41,7 +42,7 @@ export default function ChatWindow({
     }
   };
 
-  const handleEmojiSelect = (emojiObject: any) => {
+  const handleEmojiSelect = (emojiObject: EmojiClickData) => {
     setNewMessage((prev) => prev + emojiObject.emoji);
     setShowEmojiPicker(false);
   };

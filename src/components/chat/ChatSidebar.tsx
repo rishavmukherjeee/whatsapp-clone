@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Search, MoreVertical, MessageCircle } from 'lucide-react';
 import { Conversation } from '@/types/message';
-import { formatDistanceToNow } from 'date-fns';
 
 interface ChatSidebarProps {
   conversations: Conversation[];
@@ -114,7 +113,7 @@ export default function ChatSidebar({
             <MessageCircle className="w-16 h-16 mb-4 text-gray-300" />
             <p className="text-lg font-medium">No conversations yet</p>
             <p className="text-sm text-center px-4">
-              Click "Process Payloads" to load sample conversations
+              Click &quot;Process Payloads&quot; to load sample conversations
             </p>
           </div>
         ) : (

@@ -20,7 +20,12 @@ export default function Home() {
       const response = await fetch('/api/messages');
       if (response.ok) {
         const data = await response.json();
-        const formattedConversations: Conversation[] = data.map((conv: any) => ({
+        const formattedConversations: Conversation[] = data.map((conv: {
+          _id: string;
+          contact_name: string;
+          lastMessage: Message;
+          unreadCount: number;
+        }) => ({
           wa_id: conv._id,
           contact_name: conv.contact_name,
           lastMessage: conv.lastMessage,
