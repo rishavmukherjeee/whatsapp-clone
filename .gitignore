@@ -30,10 +30,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
 
-# vercel
+# env files (do not commit secrets)
+.env
+.env.local
+.env.production
+.env.development
+
+# Vercel deployment folder
 .vercel
 
 # typescript

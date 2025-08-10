@@ -1,20 +1,30 @@
+<!-- YouTube Demo -->
+<p align="center">
+  <a href="https://youtu.be/Suy5ZpGdd1g" target="_blank">
+    <img src="https://img.youtube.com/vi/Suy5ZpGdd1g/maxresdefault.jpg" alt="WhatsApp Web Clone Demo" style="border-radius:12px;max-width:100%;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+  </a>
+  <br>
+  <a href="https://youtu.be/Suy5ZpGdd1g" target="_blank"><b>▶️ Watch Demo on YouTube</b></a>
+</p>
+
 # WhatsApp Web Clone
 
-A full-stack WhatsApp Web clone built with Next.js, TypeScript, MongoDB, and Tailwind CSS. This application processes WhatsApp Business API webhook payloads and displays them in a WhatsApp-like interface.
+A beautiful full-stack WhatsApp Web clone built with Next.js, TypeScript, MongoDB, and Tailwind CSS. This app processes WhatsApp Business API webhook payloads and displays them in a WhatsApp-like interface.
 
 ## Features
 
-- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
-- 💬 **Real-time Chat Interface**: WhatsApp Web-like UI with message bubbles, timestamps, and status indicators  
-- 📊 **Webhook Processing**: Processes WhatsApp Business API webhook payloads
-- 🗄️ **MongoDB Integration**: Stores and manages messages and conversations
-- ✅ **Message Status**: Displays sent, delivered, and read status indicators
-- 🔍 **Search Functionality**: Search through conversations
-- 📤 **Send Messages**: Compose and send new messages (stored locally)
+- 📱 **Responsive Design**: Desktop & mobile friendly
+- 💬 **Real-time Chat UI**: WhatsApp-like bubbles, timestamps, and status ticks
+- ✅ **Perfect WhatsApp Ticks**: Sent, delivered, and read indicators
+- 😀 **Emoji Picker**: Add emojis to your messages
+- 📊 **Webhook Processing**: Handles WhatsApp Business API payloads
+- 🗄️ **MongoDB Integration**: Stores messages and conversations
+- 🔍 **Search Conversations**: Quickly find chats
+- 📤 **Send Messages**: Compose and send (stored locally)
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes, Node.js
 - **Database**: MongoDB Atlas
 - **Deployment**: Vercel (recommended)
