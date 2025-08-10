@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Phone, Video, MoreVertical, Smile } from 'lucide-react';
 import { Message } from '@/types/message';
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 interface ChatWindowProps {
   messages: Message[];
@@ -78,33 +78,29 @@ export default function ChatWindow({
 
   const getStatusIcon = (status: string, isIncoming: boolean) => {
     if (isIncoming) return null;
-    // WhatsApp-style SVG ticks
+    // WhatsApp-style SVG ticks using provided paths
     switch (status) {
       case 'sent':
         return (
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'inline'}}>
-            <path d="M6.5 9.5L9 12L15 6" stroke="#8696a0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="20" height="16" viewBox="0 0 20 16" style={{display: 'inline', verticalAlign: 'middle'}}>
+            <path d="M2 6 L6 10 L14 2" stroke="#999999" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         );
       case 'delivered':
         return (
-          <span style={{display: 'inline-flex'}}>
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.5 9.5L9 12L15 6" stroke="#8696a0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginLeft: -10}}>
-              <path d="M3 12L6.5 9.5L9 12L15 6" stroke="#8696a0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <span style={{display: 'inline-flex', alignItems: 'center'}}>
+            <svg width="20" height="16" viewBox="0 0 20 16" style={{display: 'inline', verticalAlign: 'middle', marginRight: -8}}>
+              <path d="M2 6 L6 10 L14 2" stroke="#999999" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M6 6 L10 10 L18 2" stroke="#999999" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </span>
         );
       case 'read':
         return (
-          <span style={{display: 'inline-flex'}}>
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.5 9.5L9 12L15 6" stroke="#53bdeb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginLeft: -10}}>
-              <path d="M3 12L6.5 9.5L9 12L15 6" stroke="#53bdeb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <span style={{display: 'inline-flex', alignItems: 'center'}}>
+            <svg width="20" height="16" viewBox="0 0 20 16" style={{display: 'inline', verticalAlign: 'middle', marginRight: -8}}>
+              <path d="M2 6 L6 10 L14 2" stroke="#4FC3F7" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M6 6 L10 10 L18 2" stroke="#4FC3F7" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </span>
         );
@@ -219,7 +215,7 @@ export default function ChatWindow({
       <div className="border-t p-4" style={{background: 'var(--sidebar-header-bg)', borderTop: '1px solid var(--sidebar-border)'}}>
         {showEmojiPicker && (
           <div style={{position: 'absolute', bottom: 60, left: 20, zIndex: 1000}}>
-            <EmojiPicker onEmojiClick={handleEmojiSelect} theme={"dark"} />
+            <EmojiPicker onEmojiClick={handleEmojiSelect} theme={Theme.DARK} />
           </div>
         )}
         <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
