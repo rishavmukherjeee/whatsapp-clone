@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Phone, Video, MoreVertical, Smile } from 'lucide-react';
 import { Message } from '@/types/message';
+import EmojiPicker from 'emoji-picker-react';
 
 interface ChatWindowProps {
   messages: Message[];
@@ -21,6 +22,7 @@ export default function ChatWindow({
   isLoading 
 }: ChatWindowProps) {
   const [newMessage, setNewMessage] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -37,6 +39,11 @@ export default function ChatWindow({
       onSendMessage(newMessage.trim());
       setNewMessage('');
     }
+  };
+
+  const handleEmojiSelect = (emojiObject: any) => {
+    setNewMessage((prev) => prev + emojiObject.emoji);
+    setShowEmojiPicker(false);
   };
 
   const formatTime = (timestamp: number) => {
@@ -71,14 +78,36 @@ export default function ChatWindow({
 
   const getStatusIcon = (status: string, isIncoming: boolean) => {
     if (isIncoming) return null;
-    
+    // WhatsApp-style SVG ticks
     switch (status) {
       case 'sent':
-        return <span className="text-gray-400">✓</span>;
+        return (
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'inline'}}>
+            <path d="M6.5 9.5L9 12L15 6" stroke="#8696a0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        );
       case 'delivered':
-        return <span className="text-gray-400">✓✓</span>;
+        return (
+          <span style={{display: 'inline-flex'}}>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.5 9.5L9 12L15 6" stroke="#8696a0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginLeft: -10}}>
+              <path d="M3 12L6.5 9.5L9 12L15 6" stroke="#8696a0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span>
+        );
       case 'read':
-        return <span className="text-blue-500">✓✓</span>;
+        return (
+          <span style={{display: 'inline-flex'}}>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.5 9.5L9 12L15 6" stroke="#53bdeb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginLeft: -10}}>
+              <path d="M3 12L6.5 9.5L9 12L15 6" stroke="#53bdeb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span>
+        );
       default:
         return null;
     }
@@ -117,7 +146,7 @@ export default function ChatWindow({
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{background: '#2a3942'}}>
-              <span className="text-lg font-medium" style={{color: 'var(--sidebar-fg)'}}>
+              <span className="text-lg font-medium" style={{color: 'var(--sidebar-fg)', border: '2px solid #53bdeb', borderRadius: '50%', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 {selectedContact.contact_name.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -168,7 +197,7 @@ export default function ChatWindow({
                     className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                       message.isIncoming
                         ? 'bg-[#202c33] text-[#e9edef] shadow-sm'
-                        : 'bg-green-500 text-white'
+                        : 'bg-[#005c4b] text-[#e9edef]'
                     }`}
                   >
                     <p className="break-words">{message.text}</p>
@@ -188,10 +217,16 @@ export default function ChatWindow({
       </div>
       {/* Message Input */}
       <div className="border-t p-4" style={{background: 'var(--sidebar-header-bg)', borderTop: '1px solid var(--sidebar-border)'}}>
+        {showEmojiPicker && (
+          <div style={{position: 'absolute', bottom: 60, left: 20, zIndex: 1000}}>
+            <EmojiPicker onEmojiClick={handleEmojiSelect} theme={"dark"} />
+          </div>
+        )}
         <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
           <button
             type="button"
             className="p-2 rounded-full hover:bg-[#222d35] transition-colors"
+            onClick={() => setShowEmojiPicker((prev) => !prev)}
           >
             <Smile className="w-6 h-6 text-gray-500" />
           </button>
